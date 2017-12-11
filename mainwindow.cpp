@@ -10,10 +10,12 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QString>
+#include <QSqlRecord>
+#include <QSqlError>
 QSqlDatabase db;
 QString FileWay2;
 QString FileWay1;
-QFile file;
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -71,6 +73,7 @@ void MainWindow::on_toolButton_clicked()
     j=0;
     i++;
     }
+    file.close();
     }
 
 
@@ -117,99 +120,59 @@ void MainWindow::on_pushButton_clicked()
 }
      if(this->ui->radioButton->isChecked()){
            QSqlQuery query;
-           QString truestr = "CREATE TABLE addressbook ( "
-                         "number INTEGER PRIMARY KEY NOT NULL, "
-                         "name VARCHAR(15), " "phone VARCHAR(12), "
-                         "email VARCHAR(15) "
-                   ");";
-           QString str1 = " ( "
-                         "number INTEGER PRIMARY KEY NOT NULL, "
-                         "name VARCHAR(15), " "phone VARCHAR(12), "
-                         "email VARCHAR(15) "
-                     ");";
+           QString str1=" ( ";
+           QString str2=" ( ";
+           QString str3="   VALUES(";
+           QString s;
+           QFile file(FileWay1);
+           if ( !file.open(QFile::ReadOnly | QFile::Text) ) {
+           qDebug() <<"File not exists";
+           }
+           else {
+           QTextStream in(&file);
+           QString line = in.readLine();
+           int i=1;
+           for (QString it : line.split(";")) {
+              str1=str1+it+" TEXT"+",";
+              str2=str2+it+",";
+              str3=str3+" :"+s.setNum(i)+",";
+              i++;
+           }
+           str1.truncate(str1.length()-1);
+           str1.append(");");
+           str2.truncate(str2.length()-1);
+           str2.append(" )");
+           str3.truncate(str3.length()-1);
+           str3.append(")");
            QFileInfo fi(FileWay1);
-
-          QString  str="CREATE TABLE "+fi.baseName()+str1;
-           qDebug() << str;
-           qDebug() << truestr;
-
-      /*  QSqlQuery query;
-        QString str = "CREATE TABLE addressbook ( "
-                      "number INTEGER PRIMARY KEY NOT NULL, "
-                      "name VARCHAR(15), " "phone VARCHAR(12), "
-                      "email VARCHAR(15) "
-                ");";*/
-        if (!query.exec(str)) {
-            qDebug() << "Unable to create a table";
-        }
+          query.prepare("CREATE TABLE "+fi.baseName()+str1);
+          if( !query.exec() ) {
+              qDebug() << db.lastError().text();
+          }
         // Добавляем данные в базу
-        QString strF = "INSERT INTO addressbook (number, name, phone, email) "
-                       "VALUES(%1, '%2', '%3', '%4');";
-
-        str = strF.arg("1")
-                       .arg("Piggy")
-                       .arg("+49 631322187")
-                       .arg("piggy@mega.de");
-        if (!query.exec(str)) {
-            qDebug() << "Unable to make insert operation";
+        query.prepare(
+                    "INSERT INTO "+ fi.baseName()+str2+
+                    str3
+                    );
+        int j=0;
+        while (!in.atEnd()){
+        line = in.readLine();
+        for (QString it : line.split(";")) {
+        qDebug()<< it;
+        j++;
+        qDebug()<< j;
+        query.bindValue( ":"+s.setNum(j), it);
+        qDebug()<< line;
         }
-        str = strF.arg("2")
-                .arg("Kermit")
-                .arg("+49 631322181")
-                .arg("kermit@mega.de");
-        if (!query.exec(str)) {
-
-            qDebug() << "Unable to make insert operation";
+        j=0;
+           //}
+       if( !query.exec() ) {
+            qDebug() << db.lastError().text();
         }
-        if (!query.exec("SELECT * FROM addressbook;")) {
 
-            qDebug() << "Unable to execute query - exiting";
-        }
-     }}
+     }}}}
 
-        /*
-         QString head;
-         QStringList::const_iterator it;
-         // Создаём поток для извлечения данных из файла
-         QTextStream in(&file);
-         // Считываем данные до конца файла
-         //while (!in.atEnd())
-         QString line = in.readLine();
-         QString str = "CREATE TABLE" + FileWay1+ "(\" ";
-                 for (QString it : line.split(";")) {
-                  head=""+it+""+typeid(it).name ();
-                  str.append("\""+head+",\"");
-                 }
-                 str.truncate(str.length()-2);
-                 str.append("\"\");\";");
-         if (!query.exec(str)) {
-             qDebug() << "Unable to create a table";
-         }
-         // Добавляем данные в базу
-         QString strF =
-                 "INSERT INTO"+FileWay1 +" (";
-                  for (QString it : line.split(";")) {
-                    strF.append(it+",");}
-                    strF.truncate(str.length()-1);
-                    strF.append("\"");
-                               //  strF.append("" \"VALUES(");
-                 //"VALUES(%1, '%2', '%3', '%4');";
-      //   str = strF.arg("Piggy")
-      //             .arg("+49 631322187")
-      //             .arg("piggy@mega.de");
-     //            if (!query.exec(str)) {
-     //            qDebug() << "Unable to make insert operation";
 
-         //str = strF.arg("2")
-          //       .arg("Kermit")
-          //       .arg("+49 631322181")
-          //       .arg("kermit@mega.de");
-        // if (!query.exec(str)) {
-        //     qDebug() << "Unable to make insert operation";
-        // }
-        // if (!query.exec("SELECT * FROM addressbook;")) {
-        //     qDebug() << "Unable to execute query - exiting";
-        // }*/
 
 
 
