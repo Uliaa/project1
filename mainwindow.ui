@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>485</width>
     <height>376</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>CSV&lt;-&gt;SQlite</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="Export">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>40</y>
+      <x>312</x>
+      <y>130</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -151,10 +151,49 @@
      <rect>
       <x>20</x>
       <y>170</y>
-      <width>351</width>
+      <width>441</width>
       <height>192</height>
      </rect>
     </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>35</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Сonversion direction</string>
+    </property>
+    <widget class="QRadioButton" name="CSV_SQlite">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>82</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>CSV-&gt;SQlite</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="SQlite_CSV">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>50</y>
+       <width>82</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>SQlite-&gt;CSV</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

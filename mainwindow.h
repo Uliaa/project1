@@ -22,6 +22,12 @@ private slots:
 
     void on_comboBox_currentIndexChanged(const QString &arg1);
 
+    void on_Export_clicked();
+
+    void on_CSV_SQlite_clicked();
+
+    void on_SQlite_CSV_clicked();
+
 private:
     Ui::MainWindow *ui;
     QSqlTableModel *model;
